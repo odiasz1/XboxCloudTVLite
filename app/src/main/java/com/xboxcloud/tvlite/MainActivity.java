@@ -1,8 +1,6 @@
 package com.xboxcloud.tvlite;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -70,40 +68,6 @@ public class MainActivity extends Activity {
         cookies.setAcceptThirdPartyCookies(webView, true);
 
         webView.setWebViewClient(new WebViewClient() {
-            private boolean openCloudGamingInChrome(String url) {
-                Uri uri = Uri.parse(url);
-                String host = uri.getHost() == null ? "" : uri.getHost().toLowerCase();
-                String path = uri.getPath() == null ? "" : uri.getPath().toLowerCase();
-                boolean cloudGaming = host.equals("play.xbox.com")
-                        || (host.equals("www.xbox.com") && path.contains("/play"));
-                if (!cloudGaming) return false;
-
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                    intent.setPackage("com.android.chrome");
-                    startActivity(intent);
-                    Log.i(TAG, "Abrindo Xbox Cloud Gaming no Chrome: " + url);
-                } catch (Exception chromeError) {
-                    try {
-                        startActivity(new Intent(Intent.ACTION_VIEW, uri));
-                        Log.i(TAG, "Abrindo Xbox Cloud Gaming no navegador padrão: " + url);
-                    } catch (Exception noBrowser) {
-                        Log.e(TAG, "Não foi possível abrir o navegador", noBrowser);
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                return openCloudGamingInChrome(url);
-            }
-
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                return openCloudGamingInChrome(request.getUrl().toString());
-            }
-
             @Override
             public void onPageStarted(WebView view, String url, android.graphics.Bitmap favicon) {
                 Log.i(TAG, "Página iniciou: " + url);
